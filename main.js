@@ -168,18 +168,74 @@ function galeryHandler(){
 
 // Products section:
 
-{/* <div class="product-item">
-<img src="./assets/products/img6.png" alt="AstroFiction">
-<div class="product-details">
-   <h3 class="product-title">AstroFiction</h3>
-   <p class="product-author">John Doe</p>
-   <p class="price-title">Price</p>
-   <p class="product-price">$ 49.90</p>
-</div>
-</div> */}
+function populateProducts(productList){
+
+
+        let productsSection = document.querySelector(".products-area");
+        productsSection.textContent = "";
+
+        // Run a loop through the products and create an HTML element ("product-item") for each of the products.
+        productList.forEach(function(product, index){
+
+        // Create the HTML element for the individual product
+        let productElement = document.createElement("div");
+        productElement.classList.add("product-item");
+        
+        // Create the product's image
+        let productImage = document.createElement("img");
+        productImage.src = product.image;
+        productImage.alt = "Image for " + product.title;
+
+        // Create the product details section
+
+        let productDetails = document.createElement("div");
+        productDetails.classList.add("product-details");
+
+        // Create product title, author, price-title and price
+
+        let proudctTitle = document.createElement("h3");
+        proudctTitle.classList.add("product-title");
+        proudctTitle.textContent = product.title;
+
+        let proudctAuthor = document.createElement("p");
+        proudctAuthor.classList.add("product-author");
+        proudctAuthor.textContent = product.author;
+
+        let proudctPriceTitle = document.createElement("h3");
+        proudctPriceTitle.classList.add("price-title");
+        proudctPriceTitle.textContent = "Price";
+
+        let proudctPrice = document.createElement("h3");
+        proudctPrice.classList.add("product-price");
+        proudctPrice.textContent = product.price > 0 ? "$" + product.price.toFixed(2) : "Free";
+
+        // Append the product details
+
+        productDetails.append(proudctTitle);
+        productDetails.append(proudctAuthor);
+        productDetails.append(proudctPriceTitle);
+        productDetails.append(proudctPrice);
+        
+
+
+        // Add all child HTML elements for the products.
+        productElement.append(productImage);
+        productElement.append(productDetails);
+
+        // Add the complete individual product to the products section.
+        productsSection.append(productElement);
+        });
+
+
+}
 
 function productsHandler(){
     let productsSection = document.querySelector(".products-area");
+    
+
+    let freeProducts = products.filter(item => !item.price || item.price <= 0);
+    let paidProducts = products.filter(item => item.price > 0);
+
 
     // Run a loop through the products and create an HTML element ("product-item") for each of the products.
     products.forEach(function(product, index){
@@ -216,11 +272,6 @@ function productsHandler(){
         proudctPrice.classList.add("product-price");
         proudctPrice.textContent = product.price > 0 ? "$" + product.price.toFixed(2) : "Free";
 
-
-
-
-
-
         // Append the product details
 
         productDetails.append(proudctTitle);
@@ -237,9 +288,38 @@ function productsHandler(){
         // Add the complete individual product to the products section.
         productsSection.append(productElement);
         });
+
+    
+    
+    //populateProducts(products);
+
+    document.querySelector(".products-filter label[for=all] span.product-amount").textContent = products.length;
+    document.querySelector(".products-filter label[for=paid] span.product-amount").textContent = paidProducts.length;
+    document.querySelector(".products-filter label[for=free] span.product-amount").textContent = freeProducts.length;
+
+    let productFilter = document.querySelector(".products-filter");
+    productFilter.addEventListener("click", function(e){
+        if (e.target.id === "all"){
+            populateProducts(products);
+        }
+        else if (e.target.id === "paid"){
+            populateProducts(paidProducts);
+        }
+        else if (e.target.id === "free"){
+            populateProducts(freeProducts);
+        }
+
+    });
 }
 
+function footerHandler(){
+    let currentYear = new Date().getFullYear();
+    document.querySelector("footer").textContent =  `© ${currentYear} - All rights reserved`;
+}
 
+navigator.geolocation.getCurrentPosition(function(position){
+    console.log(position);
+})
 // Page load
 
 menuHandler()
@@ -247,3 +327,4 @@ greetingHandler()
 clockHandler()
 galeryHandler()
 productsHandler() 
+footerHandler()
