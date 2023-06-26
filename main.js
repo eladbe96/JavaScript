@@ -1,5 +1,8 @@
 // General
 
+const weatherAPIKey = "55a0230da0a03a85d2bed0c844db9b97";
+const weatherAPIURL = `https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}&units=metric`;
+
 const galleryImages =[
     {
         src: "./assets/gallery/image2.jpg",
@@ -94,26 +97,44 @@ else{
     greetingText = "Welcome!";
 }
 
-const weatherCondition = "Sunny";
-const userLocation = "New York";
-let temprature = 25;
-let CelsiusText = `The weather is ${weatherCondition} in ${userLocation} and it's ${temprature.toFixed(1)}°C outside`;
-let FahrText = `The weather is ${weatherCondition} in ${userLocation} and it's ${celsuisToFahr(temprature).toFixed(1)}°F outside`;
 document.querySelector("#greeting").innerHTML = greetingText;
-
-
-
-document.querySelector(".weather-group").addEventListener("click", function(e){
-    if (e.target.id == "celsius"){
-        document.querySelector("p#weather").innerHTML = CelsiusText;
-    }
-    else if (e.target.id == "fahr"){
-        document.querySelector("p#weather").innerHTML = FahrText;
-    }    
-});
-
 }
 
+// Weather Text
+
+function weatherHandler(){
+
+    navigator.geolocation.getCurrentPosition( position => {
+        let latitude = position.coords.latitude;
+        let longitude = position.coords.longitude;
+        let url = weatherAPIURL
+            .replace("{lat}", latitude)
+            .replace("{lon}",longitude)
+            .replace("{API key}", weatherAPIKey);
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const condition = data.weather[0].description;
+            const location = data.name;
+            let temprature = data.main.temp;
+    
+            let CelsiusText = `The weather is ${condition} in ${location} and it's ${temprature.toFixed(1)}°C outside`;
+            let FahrText = `The weather is ${condition} in ${location} and it's ${celsuisToFahr(temprature).toFixed(1)}°F outside`;
+    
+            document.querySelector("p#weather").innerHTML = CelsiusText;
+            //Temprature Switch:
+    
+            document.querySelector(".weather-group").addEventListener("click", function(e){
+            if (e.target.id == "celsius"){
+                document.querySelector("p#weather").innerHTML = CelsiusText;
+                }
+            else if (e.target.id == "fahr"){
+                document.querySelector("p#weather").innerHTML = FahrText;
+                }    
+            });
+        });
+    });
+};
 // Clock Section
 
 function clockHandler(){
@@ -317,13 +338,13 @@ function footerHandler(){
     document.querySelector("footer").textContent =  `© ${currentYear} - All rights reserved`;
 }
 
-navigator.geolocation.getCurrentPosition(function(position){
-    console.log(position);
-})
+
+
 // Page load
 
 menuHandler()
 greetingHandler()
+weatherHandler()
 clockHandler()
 galeryHandler()
 productsHandler() 
